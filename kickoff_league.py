@@ -129,58 +129,171 @@ class CustomHelpCommand(commands.HelpCommand):
     async def send_bot_help(self, mapping):
         """Send the help message with organized categories"""
         try:
-            # Create the help message with categories
-            help_message = "**⚽ KICKOFF LEAGUE BOT ⚽**\n"
-            help_message += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            # Create embeds for different categories
+            main_embed = discord.Embed(
+                title="⚽ KICKOFF LEAGUE BOT ⚽",
+                color=discord.Color.blue(),
+                description="Use `!help [command]` for more details about a specific command!"
+            )
             
-            # Main Commands (Essential for basic league operation)
-            help_message += "**🎯 MAIN COMMANDS**\n"
-            help_message += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            # Team Management
+            team_embed = discord.Embed(
+                title="🏢 TEAM MANAGEMENT",
+                color=discord.Color.green()
+            )
+            team_embed.add_field(
+                name="Commands",
+                value="> `!register [team_name]` - Register a new team\n"
+                    "> `!squad [team_name]` - View team roster\n"
+                    "> `!my_squad` - View your team and teammates\n"
+                    "> `!add_player [team_name] [@player]` - Add player to team\n"
+                    "> `!remove_player [team_name] [@player]` - Remove player from team",
+                inline=False
+            )
             
-            help_message += "**🏢 Team Setup**\n"
-            help_message += "> `!register [team_name]` - Register a new team\n"
-            help_message += "> `!squad [team_name]` - View team roster\n"
-            help_message += "> `!my_squad` - View your team and teammates\n"
-            help_message += "> `!add_player [team_name] [@player]` - Add player to team\n\n"
+            # Team Leadership
+            leadership_embed = discord.Embed(
+                title="👑 TEAM LEADERSHIP",
+                color=discord.Color.gold()
+            )
+            leadership_embed.add_field(
+                name="Commands",
+                value="> `!captain [team_name]` - Show team captain\n"
+                    "> `!transfer_captaincy [team_name] [@new_captain]` - Transfer captaincy\n"
+                    "> `!add_co_captain [team_name] [@new_co_captain]` - Add co-captain\n"
+                    "> `!remove_co_captain [team_name] [@co_captain]` - Remove co-captain",
+                inline=False
+            )
             
-            help_message += "**⚽ Match Management**\n"
-            help_message += "> `!fixtures` - Show upcoming matches\n"
-            help_message += "> `!start_match [fixture_id]` - Start a match\n"
-            help_message += "> `!record [fixture_id] [A_score]-[B_score]` - Record match result\n"
-            help_message += "> `!results` - Show recent results\n"
-            help_message += "> `!cancel_match [fixture_id]` - Cancel an active match\n\n"
+            # Match Scheduling
+            match_embed = discord.Embed(
+                title="📅 MATCH SCHEDULING",
+                color=discord.Color.purple()
+            )
+            match_embed.add_field(
+                name="Commands",
+                value="> `!set_availability [day] [time] [timezone]` - Set team availability\n"
+                    "> `!schedule_match [fixture_id] [DD-MM HH:MM]` - Schedule a match\n"
+                    "> `!auto_schedule` - Toggle automatic scheduling\n"
+                    "> `!fixtures` - Show upcoming matches\n"
+                    "> `!my_fixtures` - Show your team's matches\n"
+                    "> `!fixtures_page [page]` - Navigate through fixtures pages",
+                inline=False
+            )
             
-            help_message += "**📊 League Stats**\n"
-            help_message += "> `!table` - Show league standings\n"
-            help_message += "> `!stats [team_name]` - View team statistics\n\n"
+            match_embed2 = discord.Embed(
+                title="📅 MATCH MANAGEMENT",
+                color=discord.Color.purple()
+            )
+            match_embed2.add_field(
+                name="Commands",
+                value="> `!start_match [fixture_id]` - Start a match\n"
+                    "> `!record [fixture_id] [A_score]-[B_score]` - Record match result\n"
+                    "> `!results` - Show recent results\n"
+                    "> `!cancel_match [fixture_id]` - Cancel an active match",
+                inline=False
+            )
             
-            # Extra Commands (Additional features)
-            help_message += "**✨ EXTRA COMMANDS**\n"
-            help_message += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-            
-            help_message += "**👥 Player Management**\n"
-            help_message += "> `!remove_player [team_name] [@player]` - Remove player from team\n\n"
-            
-            help_message += "**👑 Team Leadership**\n"
-            help_message += "> `!captain [team_name]` - Show team captain\n"
-            help_message += "> `!transfer_captaincy [team_name] [@new_captain]` - Transfer captaincy\n"
-            help_message += "> `!add_co_captain [team_name] [@new_co_captain]` - Add co-captain\n"
-            help_message += "> `!remove_co_captain [team_name] [@co_captain]` - Remove co-captain\n\n"
+            # League Information
+            league_embed = discord.Embed(
+                title="📊 LEAGUE INFORMATION",
+                color=discord.Color.dark_blue()
+            )
+            league_embed.add_field(
+                name="Commands",
+                value="> `!table` - Show league standings\n"
+                    "> `!stats [team_name]` - View team statistics\n"
+                    "> `!get_team_limit` - Show current team limit",
+                inline=False
+            )
             
             # Administration Commands (Only visible to admins/mods)
             if self.context.author.guild_permissions.administrator or self.context.author.guild_permissions.manage_guild:
-                help_message += "**🔒 ADMINISTRATION**\n"
-                help_message += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-                help_message += "> `!new_season` - Reset all league data and start a new season\n"
-                help_message += "> `!confirm` - Confirm new season creation\n"
-                help_message += "> `!cancel` - Cancel new season creation\n\n"
-            
-            help_message += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            help_message += "**💡 Tip:** Use `!help [command]` for more details about a specific command!"
-            
-            await self.get_destination().send(help_message)
+                admin_embed = discord.Embed(
+                    title="🔒 ADMINISTRATION",
+                    color=discord.Color.red()
+                )
+                admin_embed.add_field(
+                    name="Commands",
+                    value="> `!new_season` - Reset all league data and start a new season\n"
+                        "> `!set_team_limit [number]` - Set maximum number of teams\n"
+                        "> `!set_reminder_channel [channel]` - Set channel for match reminders\n"
+                        "> `!set_reminder_time [hours]` - Set match reminder time\n"
+                        "> `!toggle_auto_schedule` - Enable/disable automatic scheduling",
+                    inline=False
+                )
+                
+                # Send all embeds
+                await self.get_destination().send(embed=main_embed)
+                await self.get_destination().send(embed=team_embed)
+                await self.get_destination().send(embed=leadership_embed)
+                await self.get_destination().send(embed=match_embed)
+                await self.get_destination().send(embed=match_embed2)
+                await self.get_destination().send(embed=league_embed)
+                await self.get_destination().send(embed=admin_embed)
+            else:
+                # Send non-admin embeds
+                await self.get_destination().send(embed=main_embed)
+                await self.get_destination().send(embed=team_embed)
+                await self.get_destination().send(embed=leadership_embed)
+                await self.get_destination().send(embed=match_embed)
+                await self.get_destination().send(embed=match_embed2)
+                await self.get_destination().send(embed=league_embed)
+                
+            print(f"Help command executed by {self.context.author.name}")
         except Exception as e:
+            print(f"Error in help command: {str(e)}")
+            traceback.print_exc()  # This will print the full traceback
             await self.get_destination().send(f"Error showing help: {str(e)}")
+
+    async def send_command_help(self, command):
+        """Show help for a specific command"""
+        try:
+            embed = discord.Embed(
+                title=f"Command: !{command.name}",
+                color=discord.Color.blue(),
+                description=command.help or "No description available"
+            )
+            
+            if command.aliases:
+                embed.add_field(name="Aliases", value=", ".join(command.aliases), inline=False)
+                
+            embed.add_field(name="Usage", value=f"!{command.name} {command.signature}", inline=False)
+            
+            await self.get_destination().send(embed=embed)
+        except Exception as e:
+            print(f"Error in command help: {str(e)}")
+            traceback.print_exc()
+            await self.get_destination().send(f"Error showing command help: {str(e)}")
+
+    async def send_group_help(self, group):
+        try:
+            await self.send_command_help(group)
+        except Exception as e:
+            print(f"Error in group help: {str(e)}")
+            traceback.print_exc()
+            await self.get_destination().send(f"Error showing group help: {str(e)}")
+
+    async def send_cog_help(self, cog):
+        try:
+            await self.send_bot_help(None)
+        except Exception as e:
+            print(f"Error in cog help: {str(e)}")
+            traceback.print_exc()
+            await self.get_destination().send(f"Error showing cog help: {str(e)}")
+        
+    async def send_error_message(self, error):
+        try:
+            embed = discord.Embed(title="Error", description=error, color=discord.Color.red())
+            await self.get_destination().send(embed=embed)
+        except Exception as e:
+            print(f"Error in error message: {str(e)}")
+            traceback.print_exc()
+            # Try a simple text message as fallback
+            try:
+                await self.get_destination().send(f"Error: {error}")
+            except:
+                print("Could not send error message at all")
 
 # Set the custom help command
 bot.help_command = CustomHelpCommand()
@@ -247,19 +360,37 @@ async def on_connect():
 @bot.event
 async def on_command_error(ctx, error):
     """Handle errors during command execution"""
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.send("❌ Command not found! Use `!help` to see available commands.")
-    elif isinstance(error, commands.MissingRequiredArgument):
-        if ctx.command.name == 'register':
-            await ctx.send("❌ Please provide a team name: `!register [team name]`")
+    try:
+        if isinstance(error, commands.CommandNotFound):
+            await ctx.send("❌ Command not found! Use `!help` to see available commands.")
+        elif isinstance(error, commands.MissingRequiredArgument):
+            if ctx.command.name == 'register':
+                await ctx.send("❌ Please provide a team name: `!register [team name]`")
+            else:
+                await ctx.send(f"❌ Missing required argument. Use `!help {ctx.command.name}` for correct usage.")
+        elif isinstance(error, commands.MissingPermissions):
+            await ctx.send("❌ You don't have permission to use this command!")
+        elif isinstance(error, commands.BadArgument):
+            await ctx.send(f"❌ Invalid argument: {str(error)}")
+        elif isinstance(error, commands.CommandInvokeError):
+            # Get the original error
+            original = error.original
+            print(f"Command '{ctx.command.name}' raised an error: {type(original).__name__}: {original}")
+            traceback.print_exc()
+            await ctx.send(f"❌ An error occurred while executing the command: {str(original)}")
         else:
-            await ctx.send(f"❌ Missing required argument. Use `!help {ctx.command.name}` for correct usage.")
-    elif isinstance(error, commands.MissingPermissions):
-        await ctx.send("❌ You don't have permission to use this command!")
-    else:
-        print(f"Command error in {ctx.command.name if ctx.command else 'unknown command'}:")
-        print(f"{type(error).__name__}: {str(error)}")
-        await ctx.send(f"❌ An error occurred: {str(error)}")
+            print(f"Command error in {ctx.command.name if ctx.command else 'unknown command'}:")
+            print(f"{type(error).__name__}: {str(error)}")
+            traceback.print_exc()
+            await ctx.send(f"❌ An error occurred: {str(error)}")
+    except Exception as e:
+        # Catch any errors in the error handler itself
+        print(f"Error in error handler: {str(e)}")
+        traceback.print_exc()
+        try:
+            await ctx.send("❌ An unexpected error occurred while handling the command error.")
+        except:
+            pass  # If we can't send a message, there's not much we can do
 
 @bot.command(name='register')
 async def register_team(ctx, *, team_name: str):
